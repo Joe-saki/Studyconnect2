@@ -1,1 +1,1 @@
-web: gunicorn studyconnect.wsgi:application
+web: cd studyconnect && gunicorn studyconnect.wsgi:application --bind 0.0.0.0:$PORT

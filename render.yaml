@@ -5,7 +5,7 @@ services:
     region: oregon
     plan: free
     buildCommand: bash render-build.sh
-    startCommand: gunicorn studyconnect.wsgi:application
+    startCommand: cd studyconnect && gunicorn studyconnect.wsgi:application --bind 0.0.0.0:$PORT
     envVars:
       - key: DEBUG
         value: false
