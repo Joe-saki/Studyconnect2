@@ -1,0 +1,21 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>StudyConnect Login</title>
+    <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
+</head>
+<body class="bg">
+    <div class="card">
+        <h1 class="logo">StudyConnect</h1>
+
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="btn">Login</button>
+        </form>
+
+        <p>New here? <a href="{% url 'signup' %}">Create account</a></p>
+    </div>
+</body>
+</html>

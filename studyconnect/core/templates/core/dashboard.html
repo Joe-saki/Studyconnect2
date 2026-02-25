@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>StudyConnect Dashboard</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Segoe UI, sans-serif;
+            background: #f4f8fc;
+        }
+
+        .topbar {
+            background: #0b5ed7;
+            color: white;
+            padding: 15px 30px;
+            font-size: 22px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .topbar-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .logout-btn {
+            background: rgba(255, 70, 70, 0.8);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 70, 70, 1);
+        }
+
+        .container {
+            display: flex;
+        }
+
+        .sidebar {
+            width: 240px;
+            background: #ffffff;
+            height: 100vh;
+            padding: 20px;
+            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+            overflow-y: auto;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 12px;
+            margin-bottom: 10px;
+            text-decoration: none;
+            color: #0b5ed7;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            background: #e8f0ff;
+        }
+
+        .content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .filter-section {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .filter-section form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .filter-section select {
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .filter-section button {
+            background: #0b5ed7;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .filter-section button:hover {
+            background: #0a58ca;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: #0b5ed7;
+            font-size: 20px;
+        }
+
+        .card ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .card li {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card li:last-child {
+            border-bottom: none;
+        }
+
+        .card li a {
+            background: #0b5ed7;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .card li a:hover {
+            background: #0a58ca;
+        }
+
+        .empty-message {
+            color: #64748b;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+<div class="topbar">
+    <span>📘 StudyConnect</span>
+    {% if user.user_id %}
+    <div class="topbar-actions">
+        <span style="font-size: 14px; font-weight: normal;">ID: {{ user.user_id }}</span>
+        <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+    </div>
+    {% endif %}
+</div>
+
+<div class="container">
+    <div class="sidebar">
+        <a href="{% url 'profile' %}">👤 My Profile</a>
+        <a href="{% url 'dashboard' %}">📊 Dashboard</a>
+        <a href="{% url 'upload_note' %}">📝 Upload Notes</a>
+        <a href="{% url 'schedule' %}">📅 Schedule Meeting</a>
+        <a href="{% url 'users_list' %}">💬 Chat</a>
+    </div>
+
+    <div class="content">
+        <div class="filter-section">
+            <form method="GET">
+                <label for="course">Filter by Course:</label>
+                <select name="course" id="course">
+                    <option value="">All Courses</option>
+                    {% for c in courses %}
+                    <option value="{{ c.id }}" {% if request.GET.course|stringformat:"s" == c.id|stringformat:"s" %}selected{% endif %}>{{ c }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Filter</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h3>📚 Recent Notes</h3>
+            <ul>
+                {% for note in notes %}
+                <li>
+                    <div>
+                        <strong>{{ note.title }}</strong> — {{ note.course.code }}
+                        <br><small style="color: #64748b;">by {{ note.uploaded_by.username }}</small>
+                    </div>
+                    <a href="{{ note.file.url }}" download>Download</a>
+                </li>
+                {% empty %}
+                <li><span class="empty-message">No notes uploaded yet</span></li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="card">
+            <h3>📅 Upcoming Meetings</h3>
+            <ul>
+                {% for m in meetings %}
+                <li>
+                    <div>
+                        <strong>{{ m.topic }}</strong> — {{ m.course.code }}
+                        <br><small style="color: #64748b;">{{ m.date|date:"M d, Y H:i" }}</small>
+                    </div>
+                    <a href="{% url 'join_meeting' m.id %}">Join</a>
+                </li>
+                {% empty %}
+                <li><span class="empty-message">No meetings scheduled yet</span></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

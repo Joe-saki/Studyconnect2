@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Users - StudyConnect</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Segoe UI, sans-serif;
+            background: #f4f8fc;
+        }
+
+        .topbar {
+            background: #0b5ed7;
+            color: white;
+            padding: 15px 30px;
+            font-size: 22px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .topbar-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .logout-btn {
+            background: rgba(255, 70, 70, 0.8);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 70, 70, 1);
+        }
+
+        .container {
+            display: flex;
+        }
+
+        .sidebar {
+            width: 240px;
+            background: #ffffff;
+            height: 100vh;
+            padding: 20px;
+            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+            overflow-y: auto;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 12px;
+            margin-bottom: 10px;
+            text-decoration: none;
+            color: #0b5ed7;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            background: #e8f0ff;
+        }
+
+        .sidebar a.active {
+            background: #e0e7ff;
+            border-left: 4px solid #0b5ed7;
+            padding-left: 8px;
+        }
+
+        .content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .header {
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #1e3a8a;
+            margin: 0 0 10px 0;
+            font-size: 28px;
+        }
+
+        .header p {
+            color: #64748b;
+            margin: 0;
+        }
+
+        .search-box {
+            margin-bottom: 30px;
+        }
+
+        .search-box input {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .search-box input:focus {
+            border-color: #0b5ed7;
+            box-shadow: 0 0 5px rgba(11, 94, 215, 0.3);
+        }
+
+        .users-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .user-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            transition: 0.3s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .user-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #0b5ed7, #3b82f6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        .user-card h3 {
+            margin: 0 0 8px 0;
+            color: #1e3a8a;
+            font-size: 18px;
+        }
+
+        .user-card p {
+            margin: 5px 0;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .user-id {
+            color: #0b5ed7;
+            font-weight: bold;
+            font-size: 12px;
+            margin-top: 10px;
+            font-family: monospace;
+        }
+
+        .chat-btn {
+            display: inline-block;
+            margin-top: 15px;
+            background: #0b5ed7;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 13px;
+            transition: 0.3s;
+        }
+
+        .chat-btn:hover {
+            background: #0a58ca;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #64748b;
+        }
+
+        .empty-state h2 {
+            color: #1e3a8a;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="topbar">
+    <span>📘 StudyConnect</span>
+    <div class="topbar-actions">
+        <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+    </div>
+</div>
+
+<div class="container">
+    <div class="sidebar">
+        <a href="{% url 'dashboard' %}">📊 Dashboard</a>
+        <a href="{% url 'upload_note' %}">📝 Upload Notes</a>
+        <a href="{% url 'schedule' %}">📅 Schedule Meeting</a>
+        <a href="{% url 'users_list' %}" class="active">💬 Users</a>
+        <a href="{% url 'profile' %}">👤 My Profile</a>
+    </div>
+
+    <div class="content">
+        <div class="header">
+            <h1>👥 Connect with Users</h1>
+            <p>Find and chat with other StudyConnect users</p>
+        </div>
+
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search users by name or ID..." onkeyup="filterUsers()">
+        </div>
+
+        {% if users %}
+        <div class="users-grid" id="usersGrid">
+            {% for user in users %}
+            <div class="user-card" data-username="{{ user.username|lower }}" data-userid="{{ user.user_id|lower }}">
+                <div class="user-avatar">👤</div>
+                <h3>{{ user.username }}</h3>
+                <p>{{ user.first_name|default:"" }} {{ user.last_name|default:"" }}</p>
+                <p style="color: #64748b; font-size: 13px;">{{ user.email }}</p>
+                <div class="user-id">ID: {{ user.user_id }}</div>
+                <a href="{% url 'chat' user.id %}" class="chat-btn">💬 Send Message</a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <h2>No users available</h2>
+            <p>There are no other users to chat with yet.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    function filterUsers() {
+        const searchInput = document.getElementById('searchInput').value.toLowerCase();
+        const userCards = document.querySelectorAll('.user-card');
+        
+        userCards.forEach(card => {
+            const username = card.getAttribute('data-username');
+            const userid = card.getAttribute('data-userid');
+            
+            if (username.includes(searchInput) || userid.includes(searchInput)) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

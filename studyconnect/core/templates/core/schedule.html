@@ -1,0 +1,111 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Schedule Study Session</title>
+    <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .schedule-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .schedule-container h1 {
+            color: #1e3a8a;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #1e3a8a;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group label {
+            margin-bottom: 8px;
+            color: #1e3a8a;
+            font-weight: bold;
+        }
+        .form-group input,
+        .form-group select {
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 5px rgba(59, 130, 246, 0.3);
+        }
+        .btn {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.3s;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+<div class="schedule-container">
+    <a href="{% url 'dashboard' %}" class="back-link">← Back to Dashboard</a>
+    <h1>📅 Schedule Study Meeting</h1>
+    
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="course">Select Course</label>
+            <select name="course" id="course" required>
+                <option value="">-- Choose a course --</option>
+                {% for c in courses %}
+                <option value="{{ c.id }}">{{ c.name }} ({{ c.code }})</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="date">Date</label>
+            <input type="date" name="date" id="date" required>
+        </div>
+
+        <div class="form-group">
+            <label for="topic">Topic</label>
+            <input type="text" name="topic" id="topic" placeholder="What do you want to study?" required>
+        </div>
+
+        <button type="submit" class="btn">Schedule Meeting</button>
+    </form>
+</div>
+</body>
+</html>
+
+</body>
+</html>

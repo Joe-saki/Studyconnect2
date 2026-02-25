@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat with {{ other_user.username }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        .chat-container {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+            background: white;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: #f8fafc;
+            border-right: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background: #0b5ed7;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .chat-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .chat-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            cursor: pointer;
+            text-decoration: none;
+            color: #1f2937;
+            transition: 0.3s;
+            display: block;
+        }
+
+        .chat-item:hover {
+            background: #e0e7ff;
+            border-left: 4px solid #0b5ed7;
+            padding-left: 16px;
+        }
+
+        .chat-item.active {
+            background: #e0e7ff;
+            border-left: 4px solid #0b5ed7;
+            padding-left: 16px;
+            color: #0b5ed7;
+            font-weight: bold;
+        }
+
+        .empty-message {
+            padding: 30px 20px;
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .chat-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            padding: 20px;
+            background: #0b5ed7;
+            color: white;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h1 {
+            font-size: 20px;
+            margin: 0;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: #f8fafc;
+        }
+
+        .message {
+            display: flex;
+            margin-bottom: 10px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.sent {
+            justify-content: flex-end;
+        }
+
+        .message.received {
+            justify-content: flex-start;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            word-wrap: break-word;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .message.sent .message-content {
+            background: #0b5ed7;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.received .message-content {
+            background: white;
+            color: #1f2937;
+            border: 1px solid #e2e8f0;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-sender {
+            font-size: 12px;
+            font-weight: bold;
+            color: #0b5ed7;
+        }
+
+        .message.sent .message-sender {
+            color: #cbd5e1;
+            text-align: right;
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: #64748b;
+        }
+
+        .message.sent .message-time {
+            color: #cbd5e1;
+            text-align: right;
+        }
+
+        .input-section {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-section form {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .input-section input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .input-section input:focus {
+            border-color: #0b5ed7;
+            box-shadow: 0 0 5px rgba(11, 94, 215, 0.3);
+        }
+
+        .input-section button {
+            padding: 12px 24px;
+            background: #0b5ed7;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .input-section button:hover {
+            background: #0a58ca;
+        }
+
+        .loading {
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+            padding: 10px;
+        }
+
+        .user-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .message-content {
+                max-width: 85%;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .chat-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                max-height: 200px;
+                border-right: none;
+                border-bottom: 1px solid #e2e8f0;
+            }
+
+            .chat-main {
+                height: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="chat-container">
+    <!-- Sidebar with chat users -->
+    <div class="sidebar">
+        <div class="sidebar-header">💬 Chats</div>
+        <div class="chat-list">
+            {% if chat_users %}
+                {% for user in chat_users %}
+                    <a href="{% url 'chat' user.id %}" class="chat-item {% if user.id == other_user.id %}active{% endif %}">
+                        👤 {{ user.username }}
+                        <div style="font-size: 12px; color: #64748b; margin-top: 5px;">{{ user.user_id }}</div>
+                    </a>
+                {% endfor %}
+            {% else %}
+                <div class="empty-message">No conversations yet</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Main chat area -->
+    <div class="chat-main">
+        <!-- Chat header -->
+        <div class="chat-header">
+            <div>
+                <h1>💬 Chat with {{ other_user.username }}</h1>
+                <div class="user-badge">ID: {{ other_user.user_id }}</div>
+            </div>
+            <a href="{% url 'dashboard' %}" class="back-btn">← Dashboard</a>
+        </div>
+
+        <!-- Messages display -->
+        <div class="messages-container" id="messages-container">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="message {% if message.sender == user %}sent{% else %}received{% endif %}">
+                        <div class="message-content">
+                            {% if message.sender != user %}
+                                <div class="message-sender">{{ message.sender.username }}</div>
+                            {% endif %}
+                            <div>{{ message.text }}</div>
+                            <div class="message-time">{{ message.timestamp|date:"H:i" }}</div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div style="text-align: center; color: #64748b; padding: 40px 20px;">
+                    <p>No messages yet. Start a conversation!</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Message input -->
+        <div class="input-section">
+            <form method="POST">
+                {% csrf_token %}
+                <input type="text" name="text" placeholder="Type a message..." autocomplete="off" autofocus required>
+                <button type="submit">Send</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Auto-refresh messages every 2 seconds for real-time effect
+    const messagesContainer = document.getElementById('messages-container');
+    const other_user_id = "{{ other_user.id }}";
+
+    function loadMessages() {
+        fetch(`/api/messages/${other_user_id}/`)
+            .then(response => response.json())
+            .then(data => {
+                const messages = data.messages;
+                // Optionally update UI with new messages
+                // This is a placeholder for more sophisticated real-time updates
+                console.log('Loaded messages:', messages.length);
+            })
+            .catch(error => console.error('Error loading messages:', error));
+    }
+
+    // Poll for new messages every 2 seconds
+    setInterval(loadMessages, 2000);
+
+    // Auto-scroll to bottom when new messages arrive
+    function scrollToBottom() {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    // Initial scroll
+    scrollToBottom();
+
+    // Auto-scroll on page load
+    window.addEventListener('load', scrollToBottom);
+
+    // Scroll to bottom when form is submitted
+    document.querySelector('form').addEventListener('submit', function() {
+        setTimeout(scrollToBottom, 500);
+    });
+</script>
+
+</body>
+</html>

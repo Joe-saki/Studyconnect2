@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Profile</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Segoe UI, sans-serif;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .profile-container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 550px;
+        }
+
+        .profile-container h1 {
+            color: #1e3a8a;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 28px;
+        }
+
+        .profile-section {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .profile-field {
+            margin-bottom: 15px;
+        }
+
+        .profile-field:last-child {
+            margin-bottom: 0;
+        }
+
+        .profile-field label {
+            display: block;
+            color: #1e3a8a;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .profile-field p {
+            margin: 0;
+            color: #1f2937;
+            font-size: 16px;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #1e3a8a;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e1;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            opacity: 0.9;
+        }
+
+        .info-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="profile-container">
+    <h1>👤 My Profile</h1>
+
+    <div class="profile-section">
+        <div class="profile-field">
+            <label>Username</label>
+            <p>{{ user.username }}</p>
+        </div>
+
+        <div class="profile-field">
+            <label>Email Address</label>
+            <p>{{ user.email }}</p>
+        </div>
+
+        <div class="profile-field">
+            <label>User ID</label>
+            <p>
+                <code style="background: #f1f5f9; padding: 6px 12px; border-radius: 4px; font-family: monospace; color: #1e3a8a;">{{ user.user_id }}</code>
+            </p>
+        </div>
+
+        <div class="profile-field">
+            <label>Account Created</label>
+            <p>{{ user.date_joined|date:"M d, Y" }}</p>
+        </div>
+
+        <div class="profile-field">
+            <label>Last Login</label>
+            <p>{{ user.last_login|date:"M d, Y H:i"|default:"Never" }}</p>
+        </div>
+    </div>
+
+    {% if user.is_staff %}
+    <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #f59e0b;">
+        <span class="info-badge">Staff Member</span>
+    </div>
+    {% endif %}
+
+    <div class="button-group">
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary">← Back to Dashboard</a>
+        <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+    </div>
+</div>
+
+</body>
+</html>
