@@ -34,7 +34,10 @@ default_hosts = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(','
 ALLOWED_HOSTS = [h for h in default_hosts if h]
 
 # Known deploy hostnames
-for host in ["studyconnect2-1.onrender.com"]:
+for host in [
+    "studyconnect2-1.onrender.com",
+    "studyconnect2-production.up.railway.app",
+]:
     if host not in ALLOWED_HOSTS:
         ALLOWED_HOSTS.append(host)
 
