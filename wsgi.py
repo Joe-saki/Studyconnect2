@@ -8,13 +8,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 
-# Try adding the most likely parent directories to sys.path so
-# `import studyconnect.wsgi` will succeed.
-candidates = [ROOT, ROOT / 'studyconnect']
-for c in candidates:
-    if (c / 'studyconnect' / 'wsgi.py').exists():
-        sys.path.insert(0, str(c))
-        break
+# Ensure the inner Django package (studyconnect/studyconnect) is on sys.path
+inner_pkg_path = ROOT / 'studyconnect'
+if inner_pkg_path.exists():
+    sys.path.insert(0, str(inner_pkg_path))
+# Also keep project root for manage.py parity
+sys.path.insert(0, str(ROOT))
 
 # Import the real WSGI application
 try:
