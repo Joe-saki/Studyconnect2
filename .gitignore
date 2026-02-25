@@ -1,0 +1,39 @@
+# Python
+*.py[cod]
+__pycache__/
+*.so
+.Python
+env/
+venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+/media
+/staticfiles
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Dependencies
+/node_modules/
+
+# Testing
+.coverage
+.pytest_cache/
+
+# Environment files
+.env.local
+.env.*.local
