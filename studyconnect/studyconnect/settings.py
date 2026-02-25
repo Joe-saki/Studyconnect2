@@ -30,11 +30,29 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-m&3qdm*s67iz8^lbs3=9@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = [
-    "studyconnect2-1.onrender.com",
-    "localhost",
-    "127.0.0.1"
-]
+default_hosts = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = [h for h in default_hosts if h]
+
+# Known deploy hostnames
+for host in ["studyconnect2-1.onrender.com"]:
+    if host not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(host)
+
+# Render sets RENDER_EXTERNAL_HOSTNAME
+render_host = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if render_host and render_host not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(render_host)
+
+# Railway public domains: RAILWAY_PUBLIC_DOMAIN (recommended) or RAILWAY_URL/static URLs.
+railway_host = os.environ.get('RAILWAY_PUBLIC_DOMAIN') or os.environ.get('RAILWAY_URL') or os.environ.get('RAILWAY_STATIC_URL')
+if railway_host:
+    railway_host = railway_host.replace('https://', '').replace('http://', '').strip('/')
+    if railway_host and railway_host not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(railway_host)
+
+# Allow any up.railway.app subdomain (safer than missing dynamic host); leading dot permits subdomains.
+if ".up.railway.app" not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(".up.railway.app")
 
 
 # Application definition
@@ -155,3 +173,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 CSRF_TRUSTED_ORIGINS = [
     "https://studyconnect2-1.onrender.com"
 ]
+if render_host:
+    CSRF_TRUSTED_ORIGINS.append(f"https://{render_host}")
+if railway_host:
+    CSRF_TRUSTED_ORIGINS.append(f"https://{railway_host}")
