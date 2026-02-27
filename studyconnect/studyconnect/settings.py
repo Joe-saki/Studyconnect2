@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'core',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -180,3 +181,10 @@ if render_host:
     CSRF_TRUSTED_ORIGINS.append(f"https://{render_host}")
 if railway_host:
     CSRF_TRUSTED_ORIGINS.append(f"https://{railway_host}")
+
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    },
+}

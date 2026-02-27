@@ -378,5 +378,33 @@
     });
 </script>
 
+<div id="messages"></div>
+
+<form id="chat-form">
+    <input id="msg-input" autocomplete="off">
+    <button type="submit">Send</button>
+</form>
+
 </body>
 </html>
+
+
+<script>
+const userId = "{{ other_user.id }}";
+const socket = new WebSocket(
+    "wss://" + window.location.host + "/ws/chat/" + userId + "/"
+);
+
+socket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    const box = document.getElementById("messages");
+    box.innerHTML += `<p><b>${data.sender}</b>: ${data.message}</p>`;
+};
+
+document.getElementById("chat-form").onsubmit = function(e) {
+    e.preventDefault();
+    const input = document.getElementById("msg-input");
+    socket.send(JSON.stringify({message: input.value}));
+    input.value = "";
+};
+</script>
