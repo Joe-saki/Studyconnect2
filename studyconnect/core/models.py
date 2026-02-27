@@ -64,7 +64,15 @@ class Notification(models.Model):
 
 
 class Message(models.Model):
-    sender = models.ForeignKey("CustomUser", on_delete=models.CASCADE)
-    receiver = models.ForeignKey("CustomUser", on_delete=models.CASCADE, related_name="messages_received")
+    sender = models.ForeignKey(
+        "CustomUser",
+        on_delete=models.CASCADE,
+        related_name="sent_messages"   # ✅ ADD THIS
+    )
+    receiver = models.ForeignKey(
+        "CustomUser",
+        on_delete=models.CASCADE,
+        related_name="messages_received"
+    )
     text = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_now_add=True)   # ✅ also fixed here
