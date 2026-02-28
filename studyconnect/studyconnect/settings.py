@@ -188,3 +188,32 @@ CHANNEL_LAYERS = {
         "BACKEND": "channels.layers.InMemoryChannelLayer",
     },
 }
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://studyconnect2-production.up.railway.app",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://studyconnect2-production.up.railway.app",
+    "https://your-render-app.onrender.com",
+]
+
+ALLOWED_HOSTS = [
+    "studyconnect2-production.up.railway.app",
+    "your-render-app.onrender.com",
+]
+
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'  # default off
+
+# CSRF Trusted Origins for Render/Railway deployment
+CSRF_TRUSTED_ORIGINS = [
+    "https://studyconnect2-1.onrender.com",
+    "https://studyconnect2-production.up.railway.app",
+    "https://*.up.railway.app",
+]
+if render_host:
+    CSRF_TRUSTED_ORIGINS.append(f"https://{render_host}")
+if railway_host:
+    CSRF_TRUSTED_ORIGINS.append(f"https://{railway_host}")
